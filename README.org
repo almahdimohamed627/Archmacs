@@ -1,0 +1,98 @@
+#+TITLE: Archmacs
+#+AUTHOR: Your Name or GitHub Username
+#+OPTIONS: toc:nil num:nil
+
+* Archmacs
+  An Arch-based Linux distribution for developers, DevOps, and networking professionals.
+
+  [[https://img.shields.io/badge/License-GPL-blue.svg]]
+  [[https://img.shields.io/badge/Base-Arch_Linux-blue]]
+  [[https://img.shields.io/badge/Window_Manager-EXWM-green]]
+  [[https://img.shields.io/badge/Editor-Spacemacs-purple]]
+
+* Description
+  Archmacs is a customized, opinionated Arch Linux distribution that integrates Spacemacs and EXWM at its core. It is designed to deliver a streamlined, keyboard-centric environment tailored for software development, DevOps workflows, and network engineering.
+
+  The system comes pre-configured with a curated selection of packages, custom Spacemacs layers, and a unified theme—turning Emacs into both your editor and your window manager.
+
+* Features
+  - **EXWM (Emacs X Window Manager):** A full-featured tiling window manager embedded within Emacs for seamless control.
+  - **Pre-configured Spacemacs:** A custom Spacemacs configuration with additional layers, themes, and keybindings for development and system operations.
+  - **Arch Linux Base:** Leverages the rolling-release model, AUR access, and minimal base for flexibility and performance.
+  - **Developer & DevOps Tooling:** Pre-installed packages for languages (Python, Go, Rust, etc.), containers (Docker, Podman), orchestration (k8s tools), and infrastructure as code (Terraform, Ansible).
+  - **Networking Utilities:** Includes common networking tools (nmap, wireshark, tcpdump, iperf3, net-tools, etc.).
+  - **Unified Theming:** Consistent visual theme across GTK, terminals, Emacs, and EXWM.
+  - **Dotfiles Management:** System and user configurations are managed via a dedicated dotfiles repository for easy replication.
+
+* Quick Start (Installation)
+
+  **Warning:** This is a highly customized distribution. Recommended for experienced Arch Linux and Emacs users.
+
+  1. Download the latest ISO from the =Releases= page.
+  2. Create a bootable USB (e.g., with =dd= or =balenaEtcher=).
+  3. Boot from the USB and follow the installer (if an installer is provided). Otherwise, follow the manual installation steps below.
+
+  **Manual Installation (Advanced):**
+  - Boot the Archmacs ISO and connect to the internet.
+  - Partition and format your disks as needed.
+  - Mount the root partition to =/mnt=.
+  - Use =pacstrap= to install the base system and the =archmacs-base= package group.
+  - Generate =fstab=, =chroot= into the new system, set locale, timezone, hostname, and root password.
+  - Install and configure a bootloader.
+  - Reboot.
+
+* Usage
+  Upon first login, EXWM will start automatically. Your Spacemacs configuration is ready to use.
+
+  - **Default Modifier:** The main modifier key for EXWM is =Super= (Windows key).
+  - **Launch Programs:** Use =M-x shell= or =M-x term= for a terminal.
+  - **EXWM Basics:**
+    - =S-RET=: Launch terminal.
+    - =S-d=: Launch application via dmenu.
+    - =S-q=: Close current window.
+    - =S-f=: Toggle fullscreen.
+    - =S-0..9=: Switch to workspace.
+  - **Spacemacs:** The default leader key is =SPC=.
+
+* Project Structure
+  #+BEGIN_SRC text
+  archmacs/
+  ├── airootfs/                 # Live ISO filesystem overlay
+  ├── build-iso.sh              # Script to build the ISO
+  ├── packages.x86_64           # List of packages to include in ISO
+  ├── dotfiles/                 # User configuration files
+  │   ├── .spacemacs.d/         # Custom Spacemacs configuration
+  │   ├── .config/              # EXWM, GTK, and other app configs
+  │   └── .themes/              # GTK and icon themes
+  ├── installer/                # Custom installer scripts (optional)
+  └── README.org                # This file
+  #+END_SRC
+
+* Building the ISO
+  To build Archmacs from source (requires an Arch Linux system):
+
+  #+BEGIN_SRC bash
+  git clone https://github.com/yourusername/archmacs.git
+  cd archmacs
+  sudo ./build-iso.sh
+  #+END_SRC
+
+  The resulting ISO will be in the =./out/= directory.
+
+* Contributing
+  Contributions, issues, and feature requests are welcome. Feel free to check the [[https://github.com/yourusername/archmacs/issues][issues page]].
+
+  1. Fork the repository.
+  2. Create a feature branch (=git checkout -b feature/amazing-feature=).
+  3. Commit your changes (=git commit -m 'Add some amazing feature'=).
+  4. Push to the branch (=git push origin feature/amazing-feature=).
+  5. Open a Pull Request.
+
+* License
+  This project is distributed under the **GNU General Public License v3.0**. See the =LICENSE= file for more information.
+
+* Links
+  - **GitHub:** [[https://github.com/yourusername/archmacs]]
+  - **Spacemacs:** [[https://www.spacemacs.org]]
+  - **EXWM:** [[https://github.com/ch11ng/exwm]]
+  - **Arch Linux:** [[https://archlinux.org]]
