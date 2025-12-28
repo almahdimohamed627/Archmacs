@@ -1,9 +1,9 @@
 #+TITLE: Archmacs
-#+AUTHOR: Your Name or GitHub Username
+#+AUTHOR: Your Name
 #+OPTIONS: toc:nil num:nil
 
 * Archmacs
-  An Arch-based Linux distribution for developers, DevOps, and networking professionals.
+  An Arch-based Linux distribution for developers, DevOps, and networking professionals, featuring Spacemacs and EXWM.
 
   [[https://img.shields.io/badge/License-GPL-blue.svg]]
   [[https://img.shields.io/badge/Base-Arch_Linux-blue]]
@@ -13,86 +13,333 @@
 * Description
   Archmacs is a customized, opinionated Arch Linux distribution that integrates Spacemacs and EXWM at its core. It is designed to deliver a streamlined, keyboard-centric environment tailored for software development, DevOps workflows, and network engineering.
 
-  The system comes pre-configured with a curated selection of packages, custom Spacemacs layers, and a unified theme—turning Emacs into both your editor and your window manager.
+  The system comes pre-configured with a curated selection of packages, custom Spacemacs configuration, and a unified theme—turning Emacs into both your editor and your window manager.
 
 * Features
   - **EXWM (Emacs X Window Manager):** A full-featured tiling window manager embedded within Emacs for seamless control.
   - **Pre-configured Spacemacs:** A custom Spacemacs configuration with additional layers, themes, and keybindings for development and system operations.
   - **Arch Linux Base:** Leverages the rolling-release model, AUR access, and minimal base for flexibility and performance.
-  - **Developer & DevOps Tooling:** Pre-installed packages for languages (Python, Go, Rust, etc.), containers (Docker, Podman), orchestration (k8s tools), and infrastructure as code (Terraform, Ansible).
-  - **Networking Utilities:** Includes common networking tools (nmap, wireshark, tcpdump, iperf3, net-tools, etc.).
+  - **Developer & DevOps Tooling:** Pre-installed packages for languages (Python, Node.js, Go, Rust), containers (Docker, Podman), and more.
+  - **Networking Utilities:** Includes common networking tools (nmap, tcpdump, iperf3, etc.).
   - **Unified Theming:** Consistent visual theme across GTK, terminals, Emacs, and EXWM.
-  - **Dotfiles Management:** System and user configurations are managed via a dedicated dotfiles repository for easy replication.
+  - **Automated Testing:** Fully automated build and test infrastructure using Docker and Terraform.
 
-* Quick Start (Installation)
+* Quick Start
 
-  **Warning:** This is a highly customized distribution. Recommended for experienced Arch Linux and Emacs users.
+**Prerequisites:**
+- Fedora 40+ (or similar Linux distribution)
+- Sudo access
+- At least 4GB RAM and 2 CPU cores (recommended)
+- 20GB+ free disk space
 
-  1. Download the latest ISO from the =Releases= page.
-  2. Create a bootable USB (e.g., with =dd= or =balenaEtcher=).
-  3. Boot from the USB and follow the installer (if an installer is provided). Otherwise, follow the manual installation steps below.
+**Installation:**
 
-  **Manual Installation (Advanced):**
-  - Boot the Archmacs ISO and connect to the internet.
-  - Partition and format your disks as needed.
-  - Mount the root partition to =/mnt=.
-  - Use =pacstrap= to install the base system and the =archmacs-base= package group.
-  - Generate =fstab=, =chroot= into the new system, set locale, timezone, hostname, and root password.
-  - Install and configure a bootloader.
-  - Reboot.
+1. Clone the repository:
+   #+BEGIN_SRC bash
+   git clone https://github.com/yourusername/archmacs.git
+   cd archmacs
+   #+END_SRC
 
-* Usage
-  Upon first login, EXWM will start automatically. Your Spacemacs configuration is ready to use.
+2. Set up the environment:
+   #+BEGIN_SRC bash
+   make setup
+   #+END_SRC
 
-  - **Default Modifier:** The main modifier key for EXWM is =Super= (Windows key).
-  - **Launch Programs:** Use =M-x shell= or =M-x term= for a terminal.
-  - **EXWM Basics:**
-    - =S-RET=: Launch terminal.
-    - =S-d=: Launch application via dmenu.
-    - =S-q=: Close current window.
-    - =S-f=: Toggle fullscreen.
-    - =S-0..9=: Switch to workspace.
-  - **Spacemacs:** The default leader key is =SPC=.
+   *Note: You may need to log out and back in for group changes (docker, libvirt) to take effect.*
 
-* Project Structure
-  #+BEGIN_SRC text
-  archmacs/
-  ├── airootfs/                 # Live ISO filesystem overlay
-  ├── build-iso.sh              # Script to build the ISO
-  ├── packages.x86_64           # List of packages to include in ISO
-  ├── dotfiles/                 # User configuration files
-  │   ├── .spacemacs.d/         # Custom Spacemacs configuration
-  │   ├── .config/              # EXWM, GTK, and other app configs
-  │   └── .themes/              # GTK and icon themes
-  ├── installer/                # Custom installer scripts (optional)
-  └── README.org                # This file
-  #+END_SRC
+3. Build and test the ISO:
+   #+BEGIN_SRC bash
+   make all
+   #+END_SRC
+
+This will:
+- Build the Docker container with archiso
+- Build the Archmacs ISO
+- Create a test VM using Terraform
+- Run automated tests
+- Report results
 
 * Building the ISO
-  To build Archmacs from source (requires an Arch Linux system):
 
-  #+BEGIN_SRC bash
-  git clone https://github.com/yourusername/archmacs.git
-  cd archmacs
-  sudo ./build-iso.sh
-  #+END_SRC
+**Fast Build (Default):**
+#+BEGIN_SRC bash
+make build
+#+END_SRC
 
-  The resulting ISO will be in the =./out/= directory.
+**Full Clean Build:**
+#+BEGIN_SRC bash
+make build-full
+#+END_SRC
+
+**Custom Build with Docker:**
+#+BEGIN_SRC bash
+docker build -t archmacs-builder ./docker
+docker run --rm --privileged \
+  -v $(PWD)/archiso-profile:/build/archiso-profile \
+  -v $(PWD)/out:/build/out \
+  -v $(PWD)/work:/build/work \
+  archmacs-builder
+#+END_SRC
+
+**Environment Variables:**
+- ~BUILD_TYPE~: Set to ~fast~ (default) or ~full~ for clean build
+- ~KEEP_ALIVE~: Set to ~true~ to keep container running after build
+
+* Testing
+
+**Full Automated Testing:**
+#+BEGIN_SRC bash
+make test
+#+END_SRC
+
+This will:
+- Create a test VM using Terraform
+- Boot the ISO in the VM
+- Wait for SSH access
+- Run comprehensive tests
+- Report results
+
+**Test Categories:**
+1. Basic System Tests - Boot, memory, CPU, disk detection
+2. Package Installation Tests - Verify all packages are installed
+3. Service Tests - SSH, NetworkManager, etc.
+4. Emacs and EXWM Tests - Emacs version, configuration, EXWM availability
+5. Spacemacs/EXWM Keybinding Tests - Keybindings, workspace management
+6. Development Environment Tests - Python, Node.js, Go, etc.
+7. Configuration File Tests - Verify configuration files
+8. Network Connectivity Tests - DNS, external connectivity
+9. File System Tests - Permissions, disk operations
+10. Security Tests - Users, sudo, SSH
+11. Performance Tests - CPU load, memory usage
+12. Integration Tests - Package initialization, system integration
+
+**Manual Testing:**
+#+BEGIN_SRC bash
+# Connect to test VM
+make connect-vm
+
+# Run specific tests manually
+ssh archuser@<vm-ip>
+sudo /tmp/tests/run-tests.sh
+#+END_SRC
+
+* Project Structure
+
+#+BEGIN_SRC text
+archmacs/
+├── docker/                   # Docker container for archiso
+│   ├── Dockerfile            # Container definition
+│   └── build-entrypoint.sh  # Build script
+├── terraform/               # Terraform infrastructure
+│   ├── main.tf              # Main configuration
+│   ├── variables.tf          # Variable definitions
+│   ├── outputs.tf           # Output definitions
+│   ├── cloud-init/          # Cloud-init configs
+│   └── modules/             # Terraform modules
+│       └── test-vm/         # Test VM module
+├── archiso-profile/         # ArchISO profile
+│   ├── profiledef.sh        # Profile definition
+│   ├── packages.x86_64      # Packages list
+│   └── airootfs/            # Live system files
+│       └── root/
+│           ├── .xinitrc      # EXWM launch script
+│           ├── .emacs.d/     # Emacs configuration
+│           │   └── init.el   # Spacemacs config
+│           └── customize.sh  # Customization script
+├── tests/                   # Test scripts
+│   ├── run-tests.sh         # Main test suite
+│   ├── test-emacs.sh        # Emacs/EXWM tests
+│   └── test-packages.sh     # Package tests
+├── scripts/                 # Utility scripts
+│   ├── setup-env.sh         # Environment setup
+│   └── cleanup.sh           # Cleanup script
+├── out/                     # Build output
+├── work/                    # Build work directory
+├── Makefile                 # Orchestration
+├── README.org               # This file
+└── LICENSE                  # GPL v3.0 license
+#+END_SRC
+
+* Make Targets
+
+| Target | Description |
+|--------|-------------|
+| ~help~ | Show help message |
+| ~setup~ | Set up environment (install dependencies) |
+| ~build~ | Build ISO (fast mode, with caching) |
+| ~build-full~ | Build ISO (full clean build) |
+| ~test~ | Deploy VM and run tests |
+| ~all~ | Build and test (fast) |
+| ~all-full~ | Build and test (full) |
+| ~clean~ | Clean build artifacts |
+| ~destroy~ | Destroy Terraform resources |
+| ~cleanup~ | Full cleanup (VMs, containers, artifacts) |
+| ~show-iso~ | Show ISO file information |
+| ~connect-vm~ | Connect to test VM via SSH |
+| ~test-local~ | Run tests locally without VM |
+
+* Terraform Configuration
+
+**Provider:**
+The project uses the ~dmacvicar/libvirt~ provider for managing KVM/Libvirt resources locally.
+
+**Resources:**
+- ~libvirt_network~: Test network for VM communication
+- ~libvirt_pool~: Storage pools for ISOs and VM disks
+- ~libvirt_volume~: ISO and disk volumes
+- ~libvirt_domain~: Virtual machines
+- ~libvirt_cloudinit_disk~: Cloud-init configuration for SSH access
+
+**Variables:**
+- ~iso_path~: Path to built ISO
+- ~ssh_public_key~: SSH public key for VM access
+- ~test_vm_memory~: VM memory in MB (default: 4096)
+- ~test_vm_vcpu~: Number of vCPUs (default: 2)
+- ~test_vm_disk_size~: Disk size in GB (default: 20)
+
+**Outputs:**
+- ~test_vm_ip~: IP address of the test VM
+- ~test_vm_name~: Name of the test VM
+- ~network_name~: Name of the test network
+- ~ssh_command~: SSH command to connect to VM
+
+* Docker Architecture
+
+The Docker container provides an isolated environment for building Arch Linux ISOs using ~archiso~. This approach:
+
+- Allows building Arch ISOs on non-Arch systems (like Fedora)
+- Ensures reproducible builds
+- isolates build dependencies
+- Supports both fast and full build modes
+
+**Key Components:**
+- ~archiso~: Official Arch Linux ISO building tool
+- ~squashfs-tools~: Filesystem compression
+- ~qemu-headless~: QEMU for testing (optional)
+- ~edk2-ovmf~: UEFI firmware for testing
+
+* Customization
+
+**Adding Packages:**
+Edit ~archiso-profile/packages.x86_64~:
+#+BEGIN_SRC bash
+# Add your packages
+vim
+nano
+#+END_SRC
+
+**Modifying Emacs Configuration:**
+Edit ~archiso-profile/airootfs/root/.emacs.d/init.el~:
+#+BEGIN_SRC emacs-lisp
+;; Add your customizations
+(custom-set-variables
+ '(custom-enabled-themes (quote (dracula))))
+#+END_SRC
+
+**Changing System Settings:**
+Edit ~archiso-profile/airootfs/root/customize.sh~:
+#+BEGIN_SRC bash
+# Add your customizations
+# System services
+systemctl enable my-service
+
+# User setup
+useradd -m -G wheel myuser
+#+END_SRC
+
+**Modifying EXWM Keybindings:**
+Edit ~archiso-profile/airootfs/root/.emacs.d/init.el~:
+#+BEGIN_SRC emacs-lisp
+;; Add custom keybindings
+(setq exwm-input-global-keys
+      `(([?\s-c] . (lambda () (interactive) (save-buffers-kill-emacs)))
+        ;; ... existing bindings
+        ))
+#+END_SRC
+
+* Troubleshooting
+
+**Docker Issues:**
+- Permission denied: Ensure user is in docker group: ~sudo usermod -aG docker $USER~
+- Container won't start: Check Docker daemon: ~sudo systemctl start docker~
+
+**ISO Build Issues:**
+- Build fails: Check Docker logs: ~docker logs <container-id>~
+- Missing packages: Verify packages are listed in ~packages.x86_64~
+- Customization errors: Check ~customize.sh~ for syntax errors
+
+**Terraform Issues:**
+- VM won't start: Check libvirt: ~virsh list --all~
+- Network issues: Check libvirt network: ~virsh net-list~
+- SSH connection fails: Verify cloud-init config in ~terraform/cloud-init/~
+
+**Test Failures:**
+- View test logs: ~cat /tmp/test-results/tests.log~
+- Re-run specific test: ~./tests/test-emacs.sh~
+- Check test VM: ~make connect-vm~
 
 * Contributing
-  Contributions, issues, and feature requests are welcome. Feel free to check the [[https://github.com/yourusername/archmacs/issues][issues page]].
 
-  1. Fork the repository.
-  2. Create a feature branch (=git checkout -b feature/amazing-feature=).
-  3. Commit your changes (=git commit -m 'Add some amazing feature'=).
-  4. Push to the branch (=git push origin feature/amazing-feature=).
-  5. Open a Pull Request.
+Contributions, issues, and feature requests are welcome!
+
+1. Fork the repository
+2. Create a feature branch (~git checkout -b feature/amazing-feature~)
+3. Commit your changes (~git commit -m 'Add some amazing feature'~)
+4. Push to the branch (~git push origin feature/amazing-feature~)
+5. Open a Pull Request
+
+* Development Workflow
+
+1. **Setup:** ~make setup~
+2. **Develop:** Make changes to configuration files
+3. **Build:** ~make build~ (fast) or ~make build-full~ (clean)
+4. **Test:** ~make test~
+5. **Iterate:** Repeat steps 2-4 until satisfied
+6. **Cleanup:** ~make cleanup~ when done
+
+* Performance Optimization
+
+**Fast Build Mode (Default):**
+- Reuses previous build artifacts
+- Caches package downloads
+- Incremental updates
+- Suitable for development iterations
+
+**Full Build Mode:**
+- Clean build from scratch
+- No caching
+- Ensures reproducible builds
+- Suitable for release builds
+
+**VM Resources:**
+- Adjust memory: ~TEST_VM_MEMORY=8192 make test~
+- Adjust CPUs: ~TEST_VM_VCPU=4 make test~
+- Adjust disk: ~TEST_VM_DISK_SIZE=30 make test~
+
+* Security Considerations
+
+- SSH keys are generated automatically if not present
+- Test user (~archuser~) has sudo access without password (for testing only)
+- Default passwords should be changed before production use
+- Cloud-init configuration is not encrypted
 
 * License
-  This project is distributed under the **GNU General Public License v3.0**. See the =LICENSE= file for more information.
+
+This project is distributed under the **GNU General Public License v3.0**. See the ~LICENSE~ file for more information.
 
 * Links
-  - **GitHub:** [[https://github.com/yourusername/archmacs]]
-  - **Spacemacs:** [[https://www.spacemacs.org]]
-  - **EXWM:** [[https://github.com/ch11ng/exwm]]
-  - **Arch Linux:** [[https://archlinux.org]]
+
+- **GitHub:** https://github.com/yourusername/archmacs
+- **Spacemacs:** https://www.spacemacs.org
+- **EXWM:** https://github.com/ch11ng/exwm
+- **Arch Linux:** https://archlinux.org
+- **ArchISO:** https://archlinux.org/archiso
+- **Terraform Libvirt Provider:** https://github.com/dmacvicar/terraform-provider-libvirt
+
+* Acknowledgments
+
+- Arch Linux team for the excellent archiso tool
+- Spacemacs community for the awesome configuration
+- EXWM developers for the Emacs window manager
+- Terraform and libvirt communities for the infrastructure tools
+- All contributors to this project
