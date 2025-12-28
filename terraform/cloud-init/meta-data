@@ -1,0 +1,35 @@
+#cloud-config
+hostname: ${hostname}
+manage_etc_hosts: true
+timezone: UTC
+
+users:
+  - name: archuser
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    shell: /bin/bash
+    lock_passwd: false
+    passwd: "$6$rounds=656000$IgqNwG8w1w2v$JzqZ8Rg2w3v4w5v6w7v8w9v0w1v2w3v4w5v6w7v8w9v0w1v2w"
+    ssh_authorized_keys:
+      - ${ssh_public_key}
+
+# Enable SSH
+ssh_pwauth: true
+ssh_deletekeys: false
+
+# Configure packages
+packages:
+  - openssh
+  - networkmanager
+  - curl
+  - wget
+  - htop
+
+# Enable services
+runcmd:
+  - systemctl enable sshd
+  - systemctl start sshd
+  - systemctl enable NetworkManager
+  - systemctl start NetworkManager
+
+# Final message
+final_message: "Cloud-init complete! System is ready."

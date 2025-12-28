@@ -1,0 +1,70 @@
+# Base system
+base
+linux
+linux-firmware
+linux-headers
+
+# Emacs and EXWM
+emacs
+
+# X11
+xorg-server
+xorg-xinit
+xorg-xrdb
+xorg-xsetroot
+xorg-fonts-misc
+
+# Display and compositor
+picom
+feh
+
+# Utilities
+dmenu
+networkmanager
+vim
+nano
+git
+bash
+openssh
+sudo
+wget
+curl
+htop
+tree
+tmux
+
+# Development tools
+python
+python-pip
+nodejs
+npm
+go
+rust
+base-devel
+
+# Networking tools
+nmap
+tcpdump
+net-tools
+iperf3
+wireshark-cli
+
+# Container tools
+docker
+podman
+
+# System monitoring
+neofetch
+screenfetch
+
+# Shell
+zsh
+zsh-completions
+
+# Additional tools
+ripgrep
+fd
+bat
+exa
+fzf
+jq
