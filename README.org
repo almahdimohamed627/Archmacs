@@ -1,14 +1,15 @@
 #+TITLE: Archmacs
 #+AUTHOR: Your Name
 #+OPTIONS: toc:nil num:nil
+#+STARTUP: inlineimages
 
 * Archmacs
-  An Arch-based Linux distribution for developers, DevOps, and networking professionals, featuring Spacemacs and EXWM.
-
-   [[https://img.shields.io/badge/License-GPL--blue.svg][https://www.gnu.org/licenses/gpl-3.0.html]]
-   [[https://img.shields.io/badge/Base-Arch_Linux-blue.svg][https://archlinux.org]]
-   [[https://img.shields.io/badge/Window_Manager-EXWM-green.svg][https://github.com/ch11ng/exwm]]
-   [[https://img.shields.io/badge/Editor-Spacemacs-purple.svg][https://www.spacemacs.org]]
+   An Arch-based Linux distribution for developers, DevOps, and networking professionals, featuring Spacemacs and EXWM.
+ 
+   [[https://img.shields.io/badge/License-GPL--blue.svg]]
+   [[https://img.shields.io/badge/Base-Arch_Linux-blue.svg]]
+   [[https://img.shields.io/badge/Window_Manager-EXWM-green.svg]]
+   [[https://img.shields.io/badge/Editor-Spacemacs-purple.svg]]
 
 * Description
   Archmacs is a customized, opinionated Arch Linux distribution that integrates Spacemacs and EXWM at its core. It is designed to deliver a streamlined, keyboard-centric environment tailored for software development, DevOps workflows, and network engineering.
